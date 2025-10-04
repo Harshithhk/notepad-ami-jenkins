@@ -22,11 +22,18 @@ java -version
 echo "Starting Jenkins"
 sudo systemctl start jenkins
 
-# Wait for Jenkins to be ready
 echo "Waiting for Jenkins to start..."
-while ! curl -sSf http://localhost:8080/login >/dev/null 2>&1; do
+MAX_WAIT=120   # seconds
+WAITED=0
+until curl -sSf http://localhost:8080/login >/dev/null 2>&1; do
   sleep 5
+  WAITED=$((WAITED+5))
+  if [ $WAITED -ge $MAX_WAIT ]; then
+    echo "ERROR: Jenkins did not start within $MAX_WAIT seconds."
+    exit 1
+  fi
 done
+echo "Jenkins is up!"
 
 echo "Downloading Jenkins CLI"
 wget http://localhost:8080/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
