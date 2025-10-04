@@ -1,0 +1,52 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: admin
+        - id: harshith
+          password: harshith
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+        - "Overall/Administer:admin"
+        - "Overall/Read:authenticated"
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              id: "GITHUB_CREDENTIALS"
+              password: "${GH_ACCESS_TOKEN}"
+              scope: GLOBAL
+              username: Harshithhk
+          - usernamePassword:
+              id: "DOCKER_CREDENTIALS"
+              password: "${DOCKER_ACCESS_TOKEN}"
+              scope: GLOBAL
+              username: Harshithhk
+
+tool:
+  nodejs:
+    defaultProperties:
+      - installSource:
+          installers:
+            - nodeJSInstaller:
+                npmPackagesRefreshHours: 72
+    installations:
+      - name: "node"
+        home: ""
+        properties:
+          - installSource:
+              installers:
+                - nodeJSInstaller:
+                    id: "22.3.0"
+                    npmPackagesRefreshHours: 72
+
+unclassified:
+  location:
+    url: https://jenkins.clustering.ninja
+
+jobs:
+  - file: /var/lib/jenkins/static-site-seedjob.groovy

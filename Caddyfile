@@ -1,0 +1,6 @@
+jenkins.harshithkelkar.com {
+    reverse_proxy localhost:8080
+    tls hkelkar@stevens.edu {
+    ca https://acme.zerossl.com/v2/DV90
+    }
+}
