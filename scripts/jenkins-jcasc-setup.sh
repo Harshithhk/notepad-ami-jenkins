@@ -9,16 +9,17 @@ echo "*                                                                        *
 echo "*                                                                        *"
 echo "**************************************************************************"
 
-sudo apt update
-sudo apt install fontconfig openjdk-21-jre -y
+sudo apt-get update
+sudo apt-get install fontconfig openjdk-21-jre -y
 
 sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
   https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
 echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
   https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
   /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt update
-sudo apt install -y jenkins
+
+sudo apt-get update
+sudo apt-get install -y jenkins
 
 java -version
 
@@ -114,10 +115,12 @@ EOF
 echo "Restarting Jenkins with JCasC"
 sudo systemctl daemon-reload
 sudo systemctl stop jenkins
+sudo systemctl enable jenkins
 sudo systemctl start jenkins
 
 echo "Jenkins setup completed"
 
+# Installing Nodejs
 echo "**************************************************************************"
 echo "*                                                                        *"
 echo "*                                                                        *"
@@ -174,45 +177,7 @@ sudo usermod -a -G docker jenkins
 # Check Docker version
 echo "Docker $(docker --version)"
 
-echo "**************************************************************************"
-echo "*                                                                        *"
-echo "*                                                                        *"
-echo "*                           Installing Helm                              *"
-echo "*                                                                        *"
-echo "*                                                                        *"
-echo "**************************************************************************"
-
-sudo apt-get update
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg >/dev/null
-sudo apt-get install -y apt-transport-https
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" |
-  sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update && sudo apt-get install -y helm
-
-# Check Helm version
-echo "Helm $(helm version)"
-
-
-echo "**************************************************************************"
-echo "*                                                                        *"
-echo "*                                                                        *"
-echo "*                           Installing Kubectl                           *"
-echo "*                                                                        *"
-echo "*                                                                        *"
-echo "**************************************************************************"
-
-sudo apt-get update
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key |
-  sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-# This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' |
-  sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update && sudo apt-get install -y kubectl
-
-# Check Kubectl version
-echo "Kubectl $(kubectl version --client)"
-
-
+# Install Terraform 
 echo "**************************************************************************"
 echo "*                                                                        *"
 echo "*                                                                        *"
