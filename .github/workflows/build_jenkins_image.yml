@@ -3,7 +3,7 @@ name: Build Jenkins Image
 on:
   push:
     branches:
-      - packer-test # Trigger on push to main branch
+      - dev # Trigger on push to main branch
 
 jobs:
   build-jenkins-image:
