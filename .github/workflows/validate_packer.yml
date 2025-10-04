@@ -1,0 +1,32 @@
+name: Validate Packer before merging
+
+on: [pull_request]
+
+jobs:
+  validate-packer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Run packer init
+        id: init
+        run: packer init .
+
+      - name: Run packer fmt
+        run: |
+          output=$(packer fmt .)
+          if [ -n "$output" ]; then
+             echo "$output"
+             exit 1
+          fi
+
+      - name: Add Tokens file
+        run: touch tokens.txt
+
+      - name: Run packer validate
+        run: packer validate .
