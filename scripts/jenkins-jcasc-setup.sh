@@ -10,7 +10,7 @@ echo "*                                                                        *
 echo "**************************************************************************"
 
 sudo apt update
-sudo apt install fontconfig openjdk-21-jre
+sudo apt install fontconfig openjdk-21-jre -y
 
 sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
   https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
