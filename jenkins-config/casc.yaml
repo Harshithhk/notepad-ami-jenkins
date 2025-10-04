@@ -46,7 +46,7 @@ tool:
 
 unclassified:
   location:
-    url: https://jenkins.clustering.ninja
+    url: https://jenkins.harshithkelkar.com
 
 jobs:
   - file: /var/lib/jenkins/static-site-seedjob.groovy
