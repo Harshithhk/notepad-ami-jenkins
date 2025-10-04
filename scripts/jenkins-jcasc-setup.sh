@@ -9,9 +9,13 @@ echo "*                           Installing AWS CLI                           *
 echo "*                                                                        *"
 echo "**************************************************************************"
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
-unzip /tmp/awscliv2.zip -d /tmp
-sudo /tmp/aws/install --update
+
+sudo apt-get update
+sudo apt-get install -y unzip
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install --update
 
 # Check version
 aws --version
