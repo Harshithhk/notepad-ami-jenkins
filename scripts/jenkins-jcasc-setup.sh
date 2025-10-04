@@ -1,4 +1,5 @@
 #!/bin/bash
+export DEBIAN_FRONTEND=noninteractive
 
 echo "**************************************************************************"
 echo "*                                                                        *"
@@ -8,27 +9,27 @@ echo "*                                                                        *
 echo "*                                                                        *"
 echo "**************************************************************************"
 
+sudo apt update
+sudo apt install -y fontconfig openjdk-17-jre
+
 sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
 echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list >/dev/null
 sudo apt-get update
-sudo apt-get install jenkins -y
-
-sudo apt update
-sudo apt install fontconfig openjdk-17-jre -y
+sudo apt-get install -y jenkins
 
 java -version
 
 echo "Starting Jenkins"
 sudo systemctl start jenkins
 
-echo "Setup Jenkins CLI"
-wget http://localhost:8080/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
-
-# Wait for Jenkins to start (replace localhost with your Jenkins hostname if necessary)
-echo "Waiting for Jenkins to start"
-while ! nc -z localhost 8080; do
+# Wait for Jenkins to be ready
+echo "Waiting for Jenkins to start..."
+while ! curl -sSf http://localhost:8080/login >/dev/null 2>&1; do
   sleep 5
 done
+
+echo "Downloading Jenkins CLI"
+wget http://localhost:8080/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
 
 export JENKINS_URL=http://localhost:8080
 export JENKINS_USER=admin
@@ -91,12 +92,12 @@ sudo chown jenkins:jenkins /var/lib/jenkins/*
 
 # Configure JAVA_OPTS to disable setup wizard
 sudo mkdir -p /etc/systemd/system/jenkins.service.d/
-{
-  echo "[Service]"
-  echo "Environment=\"JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Dcasc.jenkins.config=/var/lib/jenkins/casc.yaml\""
-} | sudo tee /etc/systemd/system/jenkins.service.d/override.conf
+sudo tee /etc/systemd/system/jenkins.service.d/override.conf >/dev/null <<EOF
+[Service]
+Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Dcasc.jenkins.config=/var/lib/jenkins/casc.yaml"
+EOF
 
-echo "Starting Jenkins"
+echo "Restarting Jenkins with JCasC"
 sudo systemctl daemon-reload
 sudo systemctl stop jenkins
 sudo systemctl start jenkins
@@ -123,7 +124,7 @@ echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.co
   tee /etc/apt/sources.list.d/nodesource.list
 
 # Run update and install
-sudo apt-get update && sudo apt-get install nodejs -y
+sudo apt-get update && sudo apt-get install -y nodejs
 
 sleep 3
 
@@ -138,19 +139,19 @@ echo "*                           Installing Docker                            *
 echo "*                                                                        *"
 echo "*                                                                        *"
 echo "**************************************************************************"
-sudo apt-get install ca-certificates curl gnupg
+sudo apt-get install -y ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
 # Add the repository to Apt sources:
 echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
   sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 
 # Install Docker:
-sudo apt-get update && sudo apt-get install docker-ce -y
+sudo apt-get update && sudo apt-get install -y docker-ce
 
 # Provide relevant permissions
 sudo chmod 666 /var/run/docker.sock
@@ -169,10 +170,10 @@ echo "**************************************************************************
 
 sudo apt-get update
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg >/dev/null
-sudo apt-get install apt-transport-https -y
+sudo apt-get install -y apt-transport-https
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" |
   sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt-get update && sudo apt-get install helm
+sudo apt-get update && sudo apt-get install -y helm
 
 # Check Helm version
 echo "Helm $(helm version)"
@@ -192,7 +193,7 @@ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key |
 # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' |
   sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update && sudo apt-get install kubectl -y
+sudo apt-get update && sudo apt-get install -y kubectl
 
 # Check Kubectl version
 echo "Kubectl $(kubectl version --client)"
@@ -217,7 +218,7 @@ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
 sudo tee /etc/apt/sources.list.d/hashicorp.list
 sudo apt update
-sudo apt-get install terraform
+sudo apt-get install -y terraform
 
 # Check Terraform version
 terraform -help
