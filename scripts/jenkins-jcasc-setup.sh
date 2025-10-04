@@ -1,6 +1,22 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 
+
+# Install AWS CLI v2
+echo "**************************************************************************"
+echo "*                                                                        *"
+echo "*                           Installing AWS CLI                           *"
+echo "*                                                                        *"
+echo "**************************************************************************"
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+unzip /tmp/awscliv2.zip -d /tmp
+sudo /tmp/aws/install --update
+
+# Check version
+aws --version
+
+
 echo "**************************************************************************"
 echo "*                                                                        *"
 echo "*                                                                        *"
