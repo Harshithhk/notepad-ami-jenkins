@@ -1,0 +1,48 @@
+name: Build Jenkins Image
+
+on:
+  push:
+    branches:
+      - packer-test # Trigger on push to main branch
+
+jobs:
+  build-jenkins-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install packer
+        uses: hashicorp/setup-packer@main
+
+      - name: Run `packer init`
+        id: init
+        run: packer init .
+
+      - name: Run packer fmt
+        run: |
+          output=$(packer fmt .)
+          if [ -n "$output" ]; then
+             echo "$output"
+             exit 1
+          fi
+
+      - name: Add github and docker tokens
+        run: |
+          touch tokens.txt
+          echo ${{ secrets.GH_ACCESS_TOKEN }} >> tokens.txt
+          echo ${{ secrets.DOCKER_ACCESS_TOKEN }} >> tokens.txt
+
+      - name: Run packer validate
+        run: packer validate .
+
+      - name: Run packer build
+        run: |
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          export AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
+          packer build .
+
+      - name: Remove tokens
+        run: rm tokens.txt
