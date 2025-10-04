@@ -39,7 +39,10 @@ build {
     source      = "./scripts/jenkins-jcasc-setup.sh"
     destination = "~/jenkins-jcasc-setup.sh"
   }
-
+  provisioner "file" {
+    source      = "./jenkins-config/casc.yaml"
+    destination = "~/casc.yaml"
+  }
   provisioner "file" {
     source      = "./scripts/static-site-seedjob.groovy"
     destination = "~/static-site-seedjob.groovy"
