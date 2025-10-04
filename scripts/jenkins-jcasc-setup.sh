@@ -27,7 +27,7 @@ wget http://localhost:8080/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
 # Wait for Jenkins to start (replace localhost with your Jenkins hostname if necessary)
 echo "Waiting for Jenkins to start"
 while ! nc -z localhost 8080; do
-  sleep 1
+  sleep 5
 done
 
 export JENKINS_URL=http://localhost:8080
