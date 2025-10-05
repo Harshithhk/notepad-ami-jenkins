@@ -3,8 +3,8 @@ name: Build Jenkins Image
 on:
   push:
     branches:
-      - packer-test # Trigger on push to main branch
-
+      - dev # Trigger on push to dev branch
+      - install-aws-cli # Trigger on push to install-aws-cli branch
 jobs:
   build-jenkins-image:
     runs-on: ubuntu-latest
