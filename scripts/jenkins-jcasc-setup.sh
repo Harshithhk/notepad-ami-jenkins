@@ -32,6 +32,7 @@ echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.
 sudo apt-get update
 sudo apt-get install -y jenkins
 java -version
+sudo systemctl enable jenkins || true
 sudo systemctl start jenkins || true
 
 echo "Waiting briefly for Jenkins to initialize..."
