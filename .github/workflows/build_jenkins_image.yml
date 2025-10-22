@@ -3,7 +3,7 @@ name: Build Jenkins Image
 on:
   push:
     branches:
-      - dev # Trigger on push to dev branch
+      - feature/trivvy-installation # Trigger on push to dev branch
       - install-aws-cli # Trigger on push to install-aws-cli branch
 jobs:
   build-jenkins-image:
