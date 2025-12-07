@@ -1,7 +1,7 @@
 multibranchPipelineJob('Static Site') {
   branchSources {
     github {
-      id('static-site-job')
+      id('notepad-services-job')
       scanCredentialsId('GITHUB_CREDENTIALS')
       repoOwner('Harshithhk')
       repository('notepad-services')

@@ -38,8 +38,8 @@ build {
     destination = "~/casc.yaml"
   }
   provisioner "file" {
-    source      = "./scripts/static-site-seedjob.groovy"
-    destination = "~/static-site-seedjob.groovy"
+    source      = "./scripts/notepad-services-seedjob.groovy"
+    destination = "~/notepad-services-seedjob.groovy"
   }
 
   provisioner "shell" {
