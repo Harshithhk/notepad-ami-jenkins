@@ -4,7 +4,7 @@ multibranchPipelineJob('Static Site') {
       id('static-site-job')
       scanCredentialsId('GITHUB_CREDENTIALS')
       repoOwner('Harshithhk')
-      repository('notepad-static-site')
+      repository('notepad-services')
     }
   }
 
