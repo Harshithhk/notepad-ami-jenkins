@@ -14,12 +14,6 @@ source "amazon-ebs" "ubuntu" {
   instance_type           = var.instance_type
   region                  = var.region
   ami_virtualization_type = "hvm"
-  // launch_block_device_mappings {
-  //   no_device   = true
-  //   encrypted   = false
-  //   volume_size = 30
-  //   device_name = "/dev/sda1"
-  // }
 }
 
 build {
@@ -44,8 +38,8 @@ build {
     destination = "~/casc.yaml"
   }
   provisioner "file" {
-    source      = "./scripts/static-site-seedjob.groovy"
-    destination = "~/static-site-seedjob.groovy"
+    source      = "./scripts/notepad-services-seedjob.groovy"
+    destination = "~/notepad-services-seedjob.groovy"
   }
 
   provisioner "shell" {
